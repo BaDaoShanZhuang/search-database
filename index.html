@@ -15,7 +15,7 @@
             color: #333;
         }
         .search-container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             padding: 20px;
@@ -45,20 +45,21 @@
         #results {
             margin-top: 20px;
         }
-        .result-item {
-            background: #fff;
-            padding: 15px;
-            margin-bottom: 15px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
             border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 8px;
+            text-align: left;
         }
-        .result-item h3 {
-            margin: 0 0 5px;
-            color: #007BFF;
+        th {
+            background-color: #f2f2f2;
+            color: #333;
         }
-        .result-item p {
-            margin: 5px 0;
-            color: #555;
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
     </style>
 </head>
@@ -71,1298 +72,199 @@
     </div>
 
     <script>
-        // 自定义数据库：基于提供的采购合同数据
+        // 自定义数据库：基于提供的采购合同数据，添加了单价字段（从文档中提取）
         const database = [
-  {
-    "id": 1,
-    "title": "U型锁",
-    "unit": "把",
-    "quantity": "1",
-    "brand": "玥玛牌，275",
-    "model": "玥玛牌，275",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 2,
-    "title": "门锁",
-    "unit": "套",
-    "quantity": "1",
-    "brand": "玥玛牌E7D4L2",
-    "model": "玥玛牌E7D4L2",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 3,
-    "title": "三环挂锁",
-    "unit": "把",
-    "quantity": "1",
-    "brand": "玥玛牌M19XW",
-    "model": "玥玛牌M19XW",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 4,
-    "title": "纱窗网",
-    "unit": "卷",
-    "quantity": "1",
-    "brand": "纱窗网1.2米宽 50米/卷",
-    "model": "纱窗网1.2米宽 50米/卷",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 5,
-    "title": "不锈钢水龙头",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "永乐，X9R7",
-    "model": "永乐，X9R7",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 6,
-    "title": "铜挂锁",
-    "unit": "把",
-    "quantity": "1",
-    "brand": "玥玛牌Q4K89M750 40",
-    "model": "玥玛牌Q4K89M750 40",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 7,
-    "title": "铜挂锁",
-    "unit": "把",
-    "quantity": "1",
-    "brand": "玥玛牌Q4K89M7640",
-    "model": "玥玛牌Q4K89M7640",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 8,
-    "title": "锁芯",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "玥玛牌梅花锁52",
-    "model": "玥玛牌梅花锁52",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 9,
-    "title": "花洒龙头",
-    "unit": "台",
-    "quantity": "1",
-    "brand": "爱家，R5N8",
-    "model": "爱家，R5N8",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 10,
-    "title": "水龙头",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "天净牌M4Q82Z",
-    "model": "天净牌M4Q82Z",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 11,
-    "title": "淋浴花洒",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "爱家，312",
-    "model": "爱家，312",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 12,
-    "title": "插排",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "子弹头，9053",
-    "model": "子弹头，9053",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 13,
-    "title": "毛巾",
-    "unit": "条",
-    "quantity": "1",
-    "brand": "洁丽雅。29317",
-    "model": "洁丽雅。29317",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 14,
-    "title": "磁吸门帘",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "谢人907",
-    "model": "谢人907",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 15,
-    "title": "土工布 120g/m2",
-    "unit": "平方米",
-    "quantity": "1",
-    "brand": "乐土牌，J1V7",
-    "model": "乐土牌，J1V7",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 16,
-    "title": "防锈漆",
-    "unit": "桶",
-    "quantity": "1",
-    "brand": "长虹牌，V4K0，1X3kg",
-    "model": "长虹牌，V4K0，1X3kg",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 17,
-    "title": "塑料袋",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "禾净90388，大黑塑料袋",
-    "model": "禾净90388，大黑塑料袋",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 18,
-    "title": "塑料袋",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "禾净74",
-    "model": "禾净74",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 19,
-    "title": "塑料垃圾桶",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "广州白云1402",
-    "model": "广州白云1402",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 20,
-    "title": "塑料喷壶2.5L",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "永兴K8P2",
-    "model": "永兴K8P2",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 21,
-    "title": "防滑垫",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "永乐牌2A94",
-    "model": "永乐牌2A94",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 22,
-    "title": "垃圾桶",
-    "unit": "只",
-    "quantity": "1",
-    "brand": "华光，39812",
-    "model": "华光，39812",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 23,
-    "title": "透明门帘",
-    "unit": "米",
-    "quantity": "1",
-    "brand": "谢人，X0RM3",
-    "model": "谢人，X0RM3",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 24,
-    "title": "路锥 0.5m×0.5m",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "爱家牌L3P6",
-    "model": "爱家牌L3P6",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 25,
-    "title": "PVC下水管 卡套连接/dn50×GB/T 5836.1",
-    "unit": "米",
-    "quantity": "1",
-    "brand": "三立，72，1米",
-    "model": "三立，72，1米",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 26,
-    "title": "融雪剂",
-    "unit": "袋",
-    "quantity": "1",
-    "brand": "天雪牌YJ5T0",
-    "model": "天雪牌YJ5T0",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 27,
-    "title": "除草剂 41% 水剂 200ml",
-    "unit": "千克",
-    "quantity": "1",
-    "brand": "一喷净，X9V2L",
-    "model": "一喷净，X9V2L",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 28,
-    "title": "油污清洗剂 WD-40 25kg/件",
-    "unit": "千克",
-    "quantity": "1",
-    "brand": "威猛，T5B6，1X800ml",
-    "model": "威猛，T5B6，1X800ml",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 29,
-    "title": "电子温湿度计",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "得力，LE508",
-    "model": "得力，LE508",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 30,
-    "title": "不锈钢垃圾桶",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "广州白云B23T9L",
-    "model": "广州白云B23T9L",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 31,
-    "title": "冬季防静电工作棉服（藏青色）",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "三防牌，Q0X3Y",
-    "model": "三防牌，Q0X3Y",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 32,
-    "title": "防滑线胶手套",
-    "unit": "双",
-    "quantity": "1",
-    "brand": "华光ZN592",
-    "model": "华光ZN592",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 33,
-    "title": "浴室防滑拖鞋",
-    "unit": "双",
-    "quantity": "1",
-    "brand": "路路佳，B7X39L",
-    "model": "路路佳，B7X39L",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 34,
-    "title": "餐盒",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "永兴，68",
-    "model": "永兴，68",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 35,
-    "title": "肥皂",
-    "unit": "块",
-    "quantity": "1",
-    "brand": "雕牌，6450",
-    "model": "雕牌，6450",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 36,
-    "title": "香皂",
-    "unit": "块",
-    "quantity": "1",
-    "brand": "舒肤佳，S2D8X",
-    "model": "舒肤佳，S2D8X",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 37,
-    "title": "洁厕灵",
-    "unit": "瓶",
-    "quantity": "1",
-    "brand": "威猛，7864，800mL",
-    "model": "威猛，7864，800mL",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 38,
-    "title": "洗洁精",
-    "unit": "瓶",
-    "quantity": "1",
-    "brand": "雕牌，P3D9Q，800mL",
-    "model": "雕牌，P3D9Q，800mL",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 39,
-    "title": "洁厕宝",
-    "unit": "盘",
-    "quantity": "1",
-    "brand": "蓝月亮，P4L2H",
-    "model": "蓝月亮，P4L2H",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 40,
-    "title": "毛巾",
-    "unit": "张",
-    "quantity": "1",
-    "brand": "洁丽雅，T4C7WP",
-    "model": "洁丽雅，T4C7WP",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 41,
-    "title": "牙膏",
-    "unit": "支",
-    "quantity": "1",
-    "brand": "云南白药317，210",
-    "model": "云南白药317，210",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 42,
-    "title": "海飞丝洗发水",
-    "unit": "瓶",
-    "quantity": "1",
-    "brand": "海飞丝，FJ82D1，800mL",
-    "model": "海飞丝，FJ82D1，800mL",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 43,
-    "title": "地板清洁剂 0.6kg 清洁去污",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "威猛，8207，1X500ml",
-    "model": "威猛，8207，1X500ml",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 44,
-    "title": "湿巾 10片/包 75%乙醇",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "心心相印169，1X200片",
-    "model": "心心相印169，1X200片",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 45,
-    "title": "抽纸 150抽 3层",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "心心相印762，1X6",
-    "model": "心心相印762，1X6",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 46,
-    "title": "洁柔卫生纸 203×208mm 4层8片/包",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "纸诺3D8Q",
-    "model": "纸诺3D8Q",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 47,
-    "title": "花露水 驱蚊 250ml",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "滴露，P3Q8J，300ml",
-    "model": "滴露，P3Q8J，300ml",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 48,
-    "title": "木质台历",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力，Z7P2Q",
-    "model": "得力，Z7P2Q",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 49,
-    "title": "白板",
-    "unit": "块",
-    "quantity": "1",
-    "brand": "得力B54357050",
-    "model": "得力B54357050",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 50,
-    "title": "白板",
-    "unit": "块",
-    "quantity": "1",
-    "brand": "得力92606，120×90 cm，磁性",
-    "model": "得力92606，120×90 cm，磁性",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 51,
-    "title": "票据夹",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "得力P05715，11孔",
-    "model": "得力P05715，11孔",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 52,
-    "title": "削笔机",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "得力2061，自动停机，桌面型",
-    "model": "得力2061，自动停机，桌面型",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 53,
-    "title": "纸面笔记本",
-    "unit": "本",
-    "quantity": "1",
-    "brand": "得力73942，A3，160 g/m²",
-    "model": "得力73942，A3，160 g/m²",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 54,
-    "title": "A3尺寸复印纸",
-    "unit": "包",
-    "quantity": "1",
-    "brand": "欣乐白色A3",
-    "model": "欣乐白色A3",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 55,
-    "title": "百家好世扫把套装",
-    "unit": "套",
-    "quantity": "1",
-    "brand": "大卫14W9C2",
-    "model": "大卫14W9C2",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 56,
-    "title": "台历芯",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "得力，Z7P2Q",
-    "model": "得力，Z7P2Q",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 57,
-    "title": "曲别针",
-    "unit": "盒",
-    "quantity": "1",
-    "brand": "得力9011镀锌",
-    "model": "得力9011镀锌",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 58,
-    "title": "复印纸",
-    "unit": "箱",
-    "quantity": "1",
-    "brand": "欣乐白色A4",
-    "model": "欣乐白色A4",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 59,
-    "title": "封面纸",
-    "unit": "箱",
-    "quantity": "1",
-    "brand": "得力铜板封面纸，65020",
-    "model": "得力铜板封面纸，65020",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 60,
-    "title": "粘鼠板",
-    "unit": "盒",
-    "quantity": "1",
-    "brand": "家祥，97403",
-    "model": "家祥，97403",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 61,
-    "title": "订单卡纸",
-    "unit": "本",
-    "quantity": "1",
-    "brand": "得力74834，A20",
-    "model": "得力74834，A20",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 62,
-    "title": "A4复印纸",
-    "unit": "包",
-    "quantity": "1",
-    "brand": "欣乐蓝色A4",
-    "model": "欣乐蓝色A4",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 63,
-    "title": "A4复印纸",
-    "unit": "包",
-    "quantity": "1",
-    "brand": "欣乐红色A4",
-    "model": "欣乐红色A4",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 64,
-    "title": "擦手纸",
-    "unit": "包",
-    "quantity": "1",
-    "brand": "芳洁，R1M9X",
-    "model": "芳洁，R1M9X",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 65,
-    "title": "复印纸",
-    "unit": "包",
-    "quantity": "1",
-    "brand": "欣乐白色B5",
-    "model": "欣乐白色B5",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 66,
-    "title": "枕巾",
-    "unit": "条",
-    "quantity": "1",
-    "brand": "罗兰家纺，Z5L4",
-    "model": "罗兰家纺，Z5L4",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 67,
-    "title": "床单",
-    "unit": "条",
-    "quantity": "1",
-    "brand": "罗兰家纺，1079",
-    "model": "罗兰家纺，1079",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 68,
-    "title": "棉被",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "罗兰家纺，921",
-    "model": "罗兰家纺，921",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 69,
-    "title": "枕头",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "罗兰家纺，430",
-    "model": "罗兰家纺，430",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 70,
-    "title": "床上四件套",
-    "unit": "套",
-    "quantity": "1",
-    "brand": "罗兰家纺，Q3T6L",
-    "model": "罗兰家纺，Q3T6L",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 71,
-    "title": "水晶玻璃杯",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "万象MK3J5",
-    "model": "万象MK3J5",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 72,
-    "title": "电热开水器",
-    "unit": "升",
-    "quantity": "1",
-    "brand": "三尺浪，W4T6Y",
-    "model": "三尺浪，W4T6Y",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 73,
-    "title": "鞋架及脸盆架",
-    "unit": "套",
-    "quantity": "1",
-    "brand": "永乐牌木制脸盆架583",
-    "model": "永乐牌木制脸盆架583",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 74,
-    "title": "手提式防爆探照灯",
-    "unit": "只",
-    "quantity": "1",
-    "brand": "德力西，8036",
-    "model": "德力西，8036",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 75,
-    "title": "马桶刷",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "妙洁，Y8L0",
-    "model": "妙洁，Y8L0",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 76,
-    "title": "拖把套装",
-    "unit": "套",
-    "quantity": "1",
-    "brand": "爱家，7093",
-    "model": "爱家，7093",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 77,
-    "title": "电热水壶",
-    "unit": "只",
-    "quantity": "1",
-    "brand": "得力767，1830 W",
-    "model": "得力767，1830 W",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 78,
-    "title": "纽扣电池",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "南孚28419，2035",
-    "model": "南孚28419，2035",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 79,
-    "title": "蓝月亮洗手液",
-    "unit": "瓶",
-    "quantity": "1",
-    "brand": "蓝月亮68124，1X800ml",
-    "model": "蓝月亮68124，1X800ml",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 80,
-    "title": "被罩",
-    "unit": "条",
-    "quantity": "1",
-    "brand": "罗兰家纺，W2N8P",
-    "model": "罗兰家纺，W2N8P",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 81,
-    "title": "香皂盒",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "力士AZ19P",
-    "model": "力士AZ19P",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 82,
-    "title": "不锈钢暖瓶",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "广州白云D0A45G",
-    "model": "广州白云D0A45G",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 83,
-    "title": "石英挂钟",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力881937 cm 木纹圆形",
-    "model": "得力881937 cm 木纹圆形",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 84,
-    "title": "玻璃杯",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "希诺920",
-    "model": "希诺920",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 85,
-    "title": "家用垃圾篓",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "华光C915",
-    "model": "华光C915",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 86,
-    "title": "纸杯托",
-    "unit": "包",
-    "quantity": "1",
-    "brand": "得力，8335-P",
-    "model": "得力，8335-P",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 87,
-    "title": "暖瓶",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "广州白云1584",
-    "model": "广州白云1584",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 88,
-    "title": "笔记本 16开",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力3185，16K/310",
-    "model": "得力3185，16K/310",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 89,
-    "title": "贴纸 76×76mm 得力",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力BT251，76×76 mm",
-    "model": "得力BT251，76×76 mm",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 90,
-    "title": "转笔刀 26×16×11mm 单孔",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力S68656",
-    "model": "得力S68656",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 91,
-    "title": "手摇转笔刀 92×48×93mm",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力68656，30X15",
-    "model": "得力68656，30X15",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 92,
-    "title": "记号笔 双头，细头2.00mm，粗头5.00 黑色",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力SA509，双头（细+粗），黑色",
-    "model": "得力SA509，双头（细+粗），黑色",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 93,
-    "title": "记号笔 0.5mm 黑色 油性",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力荧光记号笔S624，6支",
-    "model": "得力荧光记号笔S624，6支",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 94,
-    "title": "铅笔 2B 12支/束",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力62001，六角杆木质",
-    "model": "得力62001，六角杆木质",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 95,
-    "title": "水彩笔 彩色 水性",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力6570，24 色水溶性",
-    "model": "得力6570，24 色水溶性",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 96,
-    "title": "窗帘 1200×1200mm",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "爱家牌，5092",
-    "model": "爱家牌，5092",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 97,
-    "title": "保温杯 500ml 不锈钢",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力LL619，400 mL 不锈钢",
-    "model": "得力LL619，400 mL 不锈钢",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 98,
-    "title": "纯净水桶 7.5L",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "天水5L3T9，1X10L",
-    "model": "天水5L3T9，1X10L",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 99,
-    "title": "烟灰缸 148×148mm 玻璃 青苹果",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "水晶牌，894",
-    "model": "水晶牌，894",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 100,
-    "title": "水壶 2.5L 圆形",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力17757，2 L 不锈钢真空",
-    "model": "得力17757，2 L 不锈钢真空",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 101,
-    "title": "排拖 500mm 纤维",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "广州白云3154",
-    "model": "广州白云3154",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 102,
-    "title": "羊毛刷 100mm 羊毛",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "心云牌，B8G4",
-    "model": "心云牌，B8G4",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 103,
-    "title": "竹扫把 1200-1500mm 竹 天然植物材料",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "竹子大扫把",
-    "model": "竹子大扫把",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 104,
-    "title": "排拖 600mm 棉质 蓝色",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "广州白云L7283",
-    "model": "广州白云L7283",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 105,
-    "title": "排拖 800mm 纤维布条",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "广州白云902",
-    "model": "广州白云902",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 106,
-    "title": "擦玻璃器 40-80mm 带磁",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "爱家，D92M5",
-    "model": "爱家，D92M5",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 107,
-    "title": "香薰 150g/袋",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "心心相印GN8Q2Z，1X800g",
-    "model": "心心相印GN8Q2Z，1X800g",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 108,
-    "title": "电蚊香片 120片 恒温加热器2个",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "枪手47031",
-    "model": "枪手47031",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 109,
-    "title": "地毯 800×1100mm 红色 加厚",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "无尘牌，140",
-    "model": "无尘牌，140",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 110,
-    "title": "净水器滤芯",
-    "unit": "支",
-    "quantity": "1",
-    "brand": "启成牌4级过滤，PP棉，颗粒活性炭RO反渗透，颗粒活性炭",
-    "model": "启成牌4级过滤，PP棉，颗粒活性炭RO反渗透，颗粒活性炭",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 111,
-    "title": "棉门帘",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "谢人3482",
-    "model": "谢人3482",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 112,
-    "title": "石英钟",
-    "unit": "块",
-    "quantity": "1",
-    "brand": "康巴丝507",
-    "model": "康巴丝507",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 113,
-    "title": "苍蝇拍",
-    "unit": "把",
-    "quantity": "1",
-    "brand": "爱家牌5304",
-    "model": "爱家牌5304",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 114,
-    "title": "纸杯",
-    "unit": "袋",
-    "quantity": "1",
-    "brand": "得力19210，200 mL 100 只/袋",
-    "model": "得力19210，200 mL 100 只/袋",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 115,
-    "title": "脚垫",
-    "unit": "张",
-    "quantity": "1",
-    "brand": "永乐牌，524",
-    "model": "永乐牌，524",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 116,
-    "title": "插排",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "子弹头U8K3",
-    "model": "子弹头U8K3",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 117,
-    "title": "分类垃圾箱",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "广州白云589",
-    "model": "广州白云589",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 118,
-    "title": "不锈钢衣架",
-    "unit": "把",
-    "quantity": "1",
-    "brand": "妙洁HQ275",
-    "model": "妙洁HQ275",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 119,
-    "title": "大剪刀",
-    "unit": "把",
-    "quantity": "1",
-    "brand": "王麻子牌918",
-    "model": "王麻子牌918",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 120,
-    "title": "轮胎打气筒",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "永兴，354",
-    "model": "永兴，354",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 121,
-    "title": "量角器",
-    "unit": "把",
-    "quantity": "1",
-    "brand": "得力6239，45°/60°，15 cm",
-    "model": "得力6239，45°/60°，15 cm",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 122,
-    "title": "改锥",
-    "unit": "把",
-    "quantity": "1",
-    "brand": "德力西，8036",
-    "model": "德力西，8036",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 123,
-    "title": "工业壁扇",
-    "unit": "台",
-    "quantity": "1",
-    "brand": "美的，L04Q",
-    "model": "美的，L04Q",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 124,
-    "title": "格兰仕微波炉",
-    "unit": "台",
-    "quantity": "1",
-    "brand": "格兰仕463,2000w",
-    "model": "格兰仕463,2000w",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 125,
-    "title": "净水机",
-    "unit": "台",
-    "quantity": "1",
-    "brand": "沁园牌，P6X3Z",
-    "model": "沁园牌，P6X3Z",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 126,
-    "title": "防爆平台灯",
-    "unit": "套",
-    "quantity": "1",
-    "brand": "德力西，M8T1X",
-    "model": "德力西，M8T1X",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 127,
-    "title": "LED灯泡",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "沪字牌AN9K5，30w",
-    "model": "沪字牌AN9K5，30w",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 128,
-    "title": "LED灯泡",
-    "unit": "盏",
-    "quantity": "1",
-    "brand": "沪字牌AN9K5，50w",
-    "model": "沪字牌AN9K5，50w",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 129,
-    "title": "LED灯泡",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "沪字牌AN9K5，60w",
-    "model": "沪字牌AN9K5，60w",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 130,
-    "title": "充电电池 5# 1.2V 2400mAh",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "火雷牌，640",
-    "model": "火雷牌，640",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 131,
-    "title": "南孚电池",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "南孚T12Y5，1号",
-    "model": "南孚T12Y5，1号",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 132,
-    "title": "书架",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力BA108-01单人挂书架 蓝色",
-    "model": "得力BA108-01单人挂书架 蓝色",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 133,
-    "title": "报刊架",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力9304，落地式 海量型",
-    "model": "得力9304，落地式 海量型",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 134,
-    "title": "电磁炉",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "格兰仕Z12B,2200w",
-    "model": "格兰仕Z12B,2200w",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 135,
-    "title": "订书机",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "得力0306S，24/6，装订≤25 页",
-    "model": "得力0306S，24/6，装订≤25 页",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 136,
-    "title": "照明开关 FZM-10/220V",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力ZM-02343",
-    "model": "得力ZM-02343",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 137,
-    "title": "金刚石修正笔 RH-DL1-1.0",
-    "unit": "件",
-    "quantity": "1",
-    "brand": "得力8102，5 mm×8 m",
-    "model": "得力8102，5 mm×8 m",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 138,
-    "title": "铁锤",
-    "unit": "把",
-    "quantity": "1",
-    "brand": "德力西，B6Y3",
-    "model": "德力西，B6Y3",
-    "delivery": "甲方要求时间"
-  },
-  {
-    "id": 139,
-    "title": "铜球阀",
-    "unit": "个",
-    "quantity": "1",
-    "brand": "天净牌46",
-    "model": "天净牌46",
-    "delivery": "甲方要求时间"
-  }
+            {"id":1,"title":"U型锁","unit":"把","quantity":"1","brand":"玥玛牌，275","model":"玥玛牌，275","delivery":"甲方要求时间","price":"35"},
+            {"id":2,"title":"门锁","unit":"套","quantity":"1","brand":"玥玛牌E7D4L2","model":"玥玛牌E7D4L2","delivery":"甲方要求时间","price":"60"},
+            {"id":3,"title":"三环挂锁","unit":"把","quantity":"1","brand":"玥玛牌M19XW","model":"玥玛牌M19XW","delivery":"甲方要求时间","price":"15"},
+            {"id":4,"title":"纱窗网","unit":"卷","quantity":"1","brand":"纱窗网1.2米宽 50米/卷","model":"纱窗网1.2米宽 50米/卷","delivery":"甲方要求时间","price":"50"},
+            {"id":5,"title":"不锈钢水龙头","unit":"个","quantity":"1","brand":"永乐，X9R7","model":"永乐，X9R7","delivery":"甲方要求时间","price":"10"},
+            {"id":6,"title":"铜挂锁","unit":"把","quantity":"1","brand":"玥玛牌Q4K89M750 40","model":"玥玛牌Q4K89M750 40","delivery":"甲方要求时间","price":"35"},
+            {"id":7,"title":"铜挂锁","unit":"把","quantity":"1","brand":"玥玛牌Q4K89M7640","model":"玥玛牌Q4K89M7640","delivery":"甲方要求时间","price":"30"},
+            {"id":8,"title":"锁芯","unit":"个","quantity":"1","brand":"玥玛牌梅花锁52","model":"玥玛牌梅花锁52","delivery":"甲方要求时间","price":"10"},
+            {"id":9,"title":"花洒龙头","unit":"台","quantity":"1","brand":"爱家，R5N8","model":"爱家，R5N8","delivery":"甲方要求时间","price":"45"},
+            {"id":10,"title":"水龙头","unit":"个","quantity":"1","brand":"天净牌M4Q82Z","model":"天净牌M4Q82Z","delivery":"甲方要求时间","price":"15"},
+            {"id":11,"title":"淋浴花洒","unit":"个","quantity":"1","brand":"爱家，312","model":"爱家，312","delivery":"甲方要求时间","price":"380"},
+            {"id":12,"title":"插排","unit":"个","quantity":"1","brand":"子弹头，9053","model":"子弹头，9053","delivery":"甲方要求时间","price":"35"},
+            {"id":13,"title":"毛巾","unit":"条","quantity":"1","brand":"洁丽雅。29317","model":"洁丽雅。29317","delivery":"甲方要求时间","price":"10"},
+            {"id":14,"title":"磁吸门帘","unit":"个","quantity":"1","brand":"谢人907","model":"谢人907","delivery":"甲方要求时间","price":"60"},
+            {"id":15,"title":"土工布 120g/m2","unit":"平方米","quantity":"1","brand":"乐土牌，J1V7","model":"乐土牌，J1V7","delivery":"甲方要求时间","price":"1.5"},
+            {"id":16,"title":"防锈漆","unit":"桶","quantity":"1","brand":"长虹牌，V4K0，1X3kg","model":"长虹牌，V4K0，1X3kg","delivery":"甲方要求时间","price":"65"},
+            {"id":17,"title":"塑料袋","unit":"个","quantity":"1","brand":"禾净90388，大黑塑料袋","model":"禾净90388，大黑塑料袋","delivery":"甲方要求时间","price":"0.9"},
+            {"id":18,"title":"塑料袋","unit":"个","quantity":"1","brand":"禾净74","model":"禾净74","delivery":"甲方要求时间","price":"0.07"},
+            {"id":19,"title":"塑料垃圾桶","unit":"个","quantity":"1","brand":"广州白云1402","model":"广州白云1402","delivery":"甲方要求时间","price":"35"},
+            {"id":20,"title":"塑料喷壶2.5L","unit":"个","quantity":"1","brand":"永兴K8P2","model":"永兴K8P2","delivery":"甲方要求时间","price":"12"},
+            {"id":21,"title":"防滑垫","unit":"个","quantity":"1","brand":"永乐牌2A94","model":"永乐牌2A94","delivery":"甲方要求时间","price":"65"},
+            {"id":22,"title":"垃圾桶","unit":"只","quantity":"1","brand":"华光，39812","model":"华光，39812","delivery":"甲方要求时间","price":"40"},
+            {"id":23,"title":"透明门帘","unit":"米","quantity":"1","brand":"谢人，X0RM3","model":"谢人，X0RM3","delivery":"甲方要求时间","price":"360"},
+            {"id":24,"title":"路锥 0.5m×0.5m","unit":"件","quantity":"1","brand":"爱家牌L3P6","model":"爱家牌L3P6","delivery":"甲方要求时间","price":"20"},
+            {"id":25,"title":"PVC下水管 卡套连接/dn50×GB/T 5836.1","unit":"米","quantity":"1","brand":"三立，72，1米","model":"三立，72，1米","delivery":"甲方要求时间","price":"5"},
+            {"id":26,"title":"融雪剂","unit":"袋","quantity":"1","brand":"天雪牌YJ5T0","model":"天雪牌YJ5T0","delivery":"甲方要求时间","price":"60"},
+            {"id":27,"title":"除草剂 41% 水剂 200ml","unit":"千克","quantity":"1","brand":"一喷净，X9V2L","model":"一喷净，X9V2L","delivery":"甲方要求时间","price":"13"},
+            {"id":28,"title":"油污清洗剂 WD-40 25kg/件","unit":"千克","quantity":"1","brand":"威猛，T5B6，1X800ml","model":"威猛，T5B6，1X800ml","delivery":"甲方要求时间","price":"20"},
+            {"id":29,"title":"电子温湿度计","unit":"个","quantity":"1","brand":"得力，LE508","model":"得力，LE508","delivery":"甲方要求时间","price":"30"},
+            {"id":30,"title":"不锈钢垃圾桶","unit":"个","quantity":"1","brand":"广州白云B23T9L","model":"广州白云B23T9L","delivery":"甲方要求时间","price":"70"},
+            {"id":31,"title":"冬季防静电工作棉服（藏青色）","unit":"个","quantity":"1","brand":"三防牌，Q0X3Y","model":"三防牌，Q0X3Y","delivery":"甲方要求时间","price":"360"},
+            {"id":32,"title":"防滑线胶手套","unit":"双","quantity":"1","brand":"华光ZN592","model":"华光ZN592","delivery":"甲方要求时间","price":"8"},
+            {"id":33,"title":"浴室防滑拖鞋","unit":"双","quantity":"1","brand":"路路佳，B7X39L","model":"路路佳，B7X39L","delivery":"甲方要求时间","price":"17"},
+            {"id":34,"title":"餐盒","unit":"个","quantity":"1","brand":"永兴，68","model":"永兴，68","delivery":"甲方要求时间","price":"40"},
+            {"id":35,"title":"肥皂","unit":"块","quantity":"1","brand":"雕牌，6450","model":"雕牌，6450","delivery":"甲方要求时间","price":"3"},
+            {"id":36,"title":"香皂","unit":"块","quantity":"1","brand":"舒肤佳，S2D8X","model":"舒肤佳，S2D8X","delivery":"甲方要求时间","price":"4"},
+            {"id":37,"title":"洁厕灵","unit":"瓶","quantity":"1","brand":"威猛，7864，800mL","model":"威猛，7864，800mL","delivery":"甲方要求时间","price":"4"},
+            {"id":38,"title":"洗洁精","unit":"瓶","quantity":"1","brand":"雕牌，P3D9Q，800mL","model":"雕牌，P3D9Q，800mL","delivery":"甲方要求时间","price":"4"},
+            {"id":39,"title":"洁厕宝","unit":"盘","quantity":"1","brand":"蓝月亮，P4L2H","model":"蓝月亮，P4L2H","delivery":"甲方要求时间","price":"8"},
+            {"id":40,"title":"毛巾","unit":"张","quantity":"1","brand":"洁丽雅，T4C7WP","model":"洁丽雅，T4C7WP","delivery":"甲方要求时间","price":"10"},
+            {"id":41,"title":"牙膏","unit":"支","quantity":"1","brand":"云南白药317，210","model":"云南白药317，210","delivery":"甲方要求时间","price":"20"},
+            {"id":42,"title":"海飞丝洗发水","unit":"瓶","quantity":"1","brand":"海飞丝，FJ82D1，800mL","model":"海飞丝，FJ82D1，800mL","delivery":"甲方要求时间","price":"35"},
+            {"id":43,"title":"地板清洁剂 0.6kg 清洁去污","unit":"件","quantity":"1","brand":"威猛，8207，1X500ml","model":"威猛，8207，1X500ml","delivery":"甲方要求时间","price":"20"},
+            {"id":44,"title":"湿巾 10片/包 75%乙醇","unit":"件","quantity":"1","brand":"心心相印169，1X200片","model":"心心相印169，1X200片","delivery":"甲方要求时间","price":"3.5"},
+            {"id":45,"title":"抽纸 150抽 3层","unit":"件","quantity":"1","brand":"心心相印762，1X6","model":"心心相印762，1X6","delivery":"甲方要求时间","price":"5"},
+            {"id":46,"title":"洁柔卫生纸 203×208mm 4层8片/包","unit":"件","quantity":"1","brand":"纸诺3D8Q","model":"纸诺3D8Q","delivery":"甲方要求时间","price":"15"},
+            {"id":47,"title":"花露水 驱蚊 250ml","unit":"件","quantity":"1","brand":"滴露，P3Q8J，300ml","model":"滴露，P3Q8J，300ml","delivery":"甲方要求时间","price":"15"},
+            {"id":48,"title":"木质台历","unit":"件","quantity":"1","brand":"得力，Z7P2Q","model":"得力，Z7P2Q","delivery":"甲方要求时间","price":"120"},
+            {"id":49,"title":"白板","unit":"块","quantity":"1","brand":"得力B54357050","model":"得力B54357050","delivery":"甲方要求时间","price":"65"},
+            {"id":50,"title":"白板","unit":"块","quantity":"1","brand":"得力92606，120×90 cm，磁性","model":"得力92606，120×90 cm，磁性","delivery":"甲方要求时间","price":"95"},
+            {"id":51,"title":"票据夹","unit":"个","quantity":"1","brand":"得力P05715，11孔","model":"得力P05715，11孔","delivery":"甲方要求时间","price":"9"},
+            {"id":52,"title":"削笔机","unit":"个","quantity":"1","brand":"得力2061，自动停机，桌面型","model":"得力2061，自动停机，桌面型","delivery":"甲方要求时间","price":"33"},
+            {"id":53,"title":"纸面笔记本","unit":"本","quantity":"1","brand":"得力73942，A3，160 g/m²","model":"得力73942，A3，160 g/m²","delivery":"甲方要求时间","price":"16"},
+            {"id":54,"title":"A3尺寸复印纸","unit":"包","quantity":"1","brand":"欣乐白色A3","model":"欣乐白色A3","delivery":"甲方要求时间","price":"24"},
+            {"id":55,"title":"百家好世扫把套装","unit":"套","quantity":"1","brand":"大卫14W9C2","model":"大卫14W9C2","delivery":"甲方要求时间","price":"20"},
+            {"id":56,"title":"台历芯","unit":"个","quantity":"1","brand":"得力，Z7P2Q","model":"得力，Z7P2Q","delivery":"甲方要求时间","price":"8"},
+            {"id":57,"title":"曲别针","unit":"盒","quantity":"1","brand":"得力9011镀锌","model":"得力9011镀锌","delivery":"甲方要求时间","price":"2.2"},
+            {"id":58,"title":"复印纸","unit":"箱","quantity":"1","brand":"欣乐白色A4","model":"欣乐白色A4","delivery":"甲方要求时间","price":"185"},
+            {"id":59,"title":"封面纸","unit":"箱","quantity":"1","brand":"得力铜板封面纸，65020","model":"得力铜板封面纸，65020","delivery":"甲方要求时间","price":"21"},
+            {"id":60,"title":"粘鼠板","unit":"盒","quantity":"1","brand":"家祥，97403","model":"家祥，97403","delivery":"甲方要求时间","price":"3.5"},
+            {"id":61,"title":"订单卡纸","unit":"本","quantity":"1","brand":"得力74834，A20","model":"得力74834，A20","delivery":"甲方要求时间","price":"11"},
+            {"id":62,"title":"A4复印纸","unit":"包","quantity":"1","brand":"欣乐蓝色A4","model":"欣乐蓝色A4","delivery":"甲方要求时间","price":"16"},
+            {"id":63,"title":"A4复印纸","unit":"包","quantity":"1","brand":"欣乐红色A4","model":"欣乐红色A4","delivery":"甲方要求时间","price":"16"},
+            {"id":64,"title":"擦手纸","unit":"包","quantity":"1","brand":"芳洁，R1M9X","model":"芳洁，R1M9X","delivery":"甲方要求时间","price":"4"},
+            {"id":65,"title":"复印纸","unit":"包","quantity":"1","brand":"欣乐白色B5","model":"欣乐白色B5","delivery":"甲方要求时间","price":"23.5"},
+            {"id":66,"title":"枕巾","unit":"条","quantity":"1","brand":"罗兰家纺，Z5L4","model":"罗兰家纺，Z5L4","delivery":"甲方要求时间","price":"2.5"},
+            {"id":67,"title":"床单","unit":"条","quantity":"1","brand":"罗兰家纺，1079","model":"罗兰家纺，1079","delivery":"甲方要求时间","price":"130"},
+            {"id":68,"title":"棉被","unit":"件","quantity":"1","brand":"罗兰家纺，921","model":"罗兰家纺，921","delivery":"甲方要求时间","price":"270"},
+            {"id":69,"title":"枕头","unit":"个","quantity":"1","brand":"罗兰家纺，430","model":"罗兰家纺，430","delivery":"甲方要求时间","price":"55"},
+            {"id":70,"title":"床上四件套","unit":"套","quantity":"1","brand":"罗兰家纺，Q3T6L","model":"罗兰家纺，Q3T6L","delivery":"甲方要求时间","price":"180"},
+            {"id":71,"title":"水晶玻璃杯","unit":"个","quantity":"1","brand":"万象MK3J5","model":"万象MK3J5","delivery":"甲方要求时间","price":"180"},
+            {"id":72,"title":"电热开水器","unit":"升","quantity":"1","brand":"三尺浪，W4T6Y","model":"三尺浪，W4T6Y","delivery":"甲方要求时间","price":"280"},
+            {"id":73,"title":"鞋架及脸盆架","unit":"套","quantity":"1","brand":"永乐牌木制脸盆架583","model":"永乐牌木制脸盆架583","delivery":"甲方要求时间","price":"80"},
+            {"id":74,"title":"手提式防爆探照灯","unit":"只","quantity":"1","brand":"德力西，8036","model":"德力西，8036","delivery":"甲方要求时间","price":"250"},
+            {"id":75,"title":"马桶刷","unit":"个","quantity":"1","brand":"妙洁，Y8L0","model":"妙洁，Y8L0","delivery":"甲方要求时间","price":"8"},
+            {"id":76,"title":"拖把套装","unit":"套","quantity":"1","brand":"爱家，7093","model":"爱家，7093","delivery":"甲方要求时间","price":"20"},
+            {"id":77,"title":"电热水壶","unit":"只","quantity":"1","brand":"得力767，1830 W","model":"得力767，1830 W","delivery":"甲方要求时间","price":"100"},
+            {"id":78,"title":"纽扣电池","unit":"个","quantity":"1","brand":"南孚28419，2035","model":"南孚28419，2035","delivery":"甲方要求时间","price":"3.5"},
+            {"id":79,"title":"蓝月亮洗手液","unit":"瓶","quantity":"1","brand":"蓝月亮68124，1X800ml","model":"蓝月亮68124，1X800ml","delivery":"甲方要求时间","price":"10"},
+            {"id":80,"title":"被罩","unit":"条","quantity":"1","brand":"罗兰家纺，W2N8P","model":"罗兰家纺，W2N8P","delivery":"甲方要求时间","price":"140"},
+            {"id":81,"title":"香皂盒","unit":"个","quantity":"1","brand":"力士AZ19P","model":"力士AZ19P","delivery":"甲方要求时间","price":"5"},
+            {"id":82,"title":"不锈钢暖瓶","unit":"个","quantity":"1","brand":"广州白云D0A45G","model":"广州白云D0A45G","delivery":"甲方要求时间","price":"50"},
+            {"id":83,"title":"石英挂钟","unit":"件","quantity":"1","brand":"得力881937 cm 木纹圆形","model":"得力881937 cm 木纹圆形","delivery":"甲方要求时间","price":"60"},
+            {"id":84,"title":"玻璃杯","unit":"个","quantity":"1","brand":"希诺920","model":"希诺920","delivery":"甲方要求时间","price":"120"},
+            {"id":85,"title":"家用垃圾篓","unit":"个","quantity":"1","brand":"华光C915","model":"华光C915","delivery":"甲方要求时间","price":"8"},
+            {"id":86,"title":"纸杯托","unit":"包","quantity":"1","brand":"得力，8335-P","model":"得力，8335-P","delivery":"甲方要求时间","price":"1.5"},
+            {"id":87,"title":"暖瓶","unit":"个","quantity":"1","brand":"广州白云1584","model":"广州白云1584","delivery":"甲方要求时间","price":"25"},
+            {"id":88,"title":"笔记本 16开","unit":"件","quantity":"1","brand":"得力3185，16K/310","model":"得力3185，16K/310","delivery":"甲方要求时间","price":"19"},
+            {"id":89,"title":"贴纸 76×76mm 得力","unit":"件","quantity":"1","brand":"得力BT251，76×76 mm","model":"得力BT251，76×76 mm","delivery":"甲方要求时间","price":"5.5"},
+            {"id":90,"title":"转笔刀 26×16×11mm 单孔","unit":"件","quantity":"1","brand":"得力S68656","model":"得力S68656","delivery":"甲方要求时间","price":"13"},
+            {"id":91,"title":"手摇转笔刀 92×48×93mm","unit":"件","quantity":"1","brand":"得力68656，30X15","model":"得力68656，30X15","delivery":"甲方要求时间","price":"19"},
+            {"id":92,"title":"记号笔 双头，细头2.00mm，粗头5.00 黑色","unit":"件","quantity":"1","brand":"得力SA509，双头（细+粗），黑色","model":"得力SA509，双头（细+粗），黑色","delivery":"甲方要求时间","price":"2.2"},
+            {"id":93,"title":"记号笔 0.5mm 黑色 油性","unit":"件","quantity":"1","brand":"得力荧光记号笔S624，6支","model":"得力荧光记号笔S624，6支","delivery":"甲方要求时间","price":"2.2"},
+            {"id":94,"title":"铅笔 2B 12支/束","unit":"件","quantity":"1","brand":"得力62001，六角杆木质","model":"得力62001，六角杆木质","delivery":"甲方要求时间","price":"13"},
+            {"id":95,"title":"水彩笔 彩色 水性","unit":"件","quantity":"1","brand":"得力6570，24 色水溶性","model":"得力6570，24 色水溶性","delivery":"甲方要求时间","price":"2.8"},
+            {"id":96,"title":"窗帘 1200×1200mm","unit":"件","quantity":"1","brand":"爱家牌，5092","model":"爱家牌，5092","delivery":"甲方要求时间","price":"60"},
+            {"id":97,"title":"保温杯 500ml 不锈钢","unit":"件","quantity":"1","brand":"得力LL619，400 mL 不锈钢","model":"得力LL619，400 mL 不锈钢","delivery":"甲方要求时间","price":"35"},
+            {"id":98,"title":"纯净水桶 7.5L","unit":"件","quantity":"1","brand":"天水5L3T9，1X10L","model":"天水5L3T9，1X10L","delivery":"甲方要求时间","price":"25"},
+            {"id":99,"title":"烟灰缸 148×148mm 玻璃 青苹果","unit":"件","quantity":"1","brand":"水晶牌，894","model":"水晶牌，894","delivery":"甲方要求时间","price":"12"},
+            {"id":100,"title":"水壶 2.5L 圆形","unit":"件","quantity":"1","brand":"得力17757，2 L 不锈钢真空","model":"得力17757，2 L 不锈钢真空","delivery":"甲方要求时间","price":"20"},
+            {"id":101,"title":"排拖 500mm 纤维","unit":"件","quantity":"1","brand":"广州白云3154","model":"广州白云3154","delivery":"甲方要求时间","price":"25"},
+            {"id":102,"title":"羊毛刷 100mm 羊毛","unit":"件","quantity":"1","brand":"心云牌，B8G4","model":"心云牌，B8G4","delivery":"甲方要求时间","price":"3"},
+            {"id":103,"title":"竹扫把 1200-1500mm 竹 天然植物材料","unit":"件","quantity":"1","brand":"竹子大扫把","model":"竹子大扫把","delivery":"甲方要求时间","price":"20"},
+            {"id":104,"title":"排拖 600mm 棉质 蓝色","unit":"件","quantity":"1","brand":"广州白云L7283","model":"广州白云L7283","delivery":"甲方要求时间","price":"30"},
+            {"id":105,"title":"排拖 800mm 纤维布条","unit":"件","quantity":"1","brand":"广州白云902","model":"广州白云902","delivery":"甲方要求时间","price":"35"},
+            {"id":106,"title":"擦玻璃器 40-80mm 带磁","unit":"件","quantity":"1","brand":"爱家，D92M5","model":"爱家，D92M5","delivery":"甲方要求时间","price":"25"},
+            {"id":107,"title":"香薰 150g/袋","unit":"件","quantity":"1","brand":"心心相印GN8Q2Z，1X800g","model":"心心相印GN8Q2Z，1X800g","delivery":"甲方要求时间","price":"10"},
+            {"id":108,"title":"电蚊香片 120片 恒温加热器2个","unit":"件","quantity":"1","brand":"枪手47031","model":"枪手47031","delivery":"甲方要求时间","price":"23"},
+            {"id":109,"title":"地毯 800×1100mm 红色 加厚","unit":"件","quantity":"1","brand":"无尘牌，140","model":"无尘牌，140","delivery":"甲方要求时间","price":"50"},
+            {"id":110,"title":"净水器滤芯","unit":"支","quantity":"1","brand":"启成牌4级过滤，PP棉，颗粒活性炭RO反渗透，颗粒活性炭","model":"启成牌4级过滤，PP棉，颗粒活性炭RO反渗透，颗粒活性炭","delivery":"甲方要求时间","price":"530"},
+            {"id":111,"title":"棉门帘","unit":"个","quantity":"1","brand":"谢人3482","model":"谢人3482","delivery":"甲方要求时间","price":"45"},
+            {"id":112,"title":"石英钟","unit":"块","quantity":"1","brand":"康巴丝507","model":"康巴丝507","delivery":"甲方要求时间","price":"40"},
+            {"id":113,"title":"苍蝇拍","unit":"把","quantity":"1","brand":"爱家牌5304","model":"爱家牌5304","delivery":"甲方要求时间","price":"2"},
+            {"id":114,"title":"纸杯","unit":"袋","quantity":"1","brand":"得力19210，200 mL 100 只/袋","model":"得力19210，200 mL 100 只/袋","delivery":"甲方要求时间","price":"6"},
+            {"id":115,"title":"脚垫","unit":"张","quantity":"1","brand":"永乐牌，524","model":"永乐牌，524","delivery":"甲方要求时间","price":"30"},
+            {"id":116,"title":"插排","unit":"个","quantity":"1","brand":"子弹头U8K3","model":"子弹头U8K3","delivery":"甲方要求时间","price":"20"},
+            {"id":117,"title":"分类垃圾箱","unit":"个","quantity":"1","brand":"广州白云589","model":"广州白云589","delivery":"甲方要求时间","price":"120"},
+            {"id":118,"title":"不锈钢衣架","unit":"把","quantity":"1","brand":"妙洁HQ275","model":"妙洁HQ275","delivery":"甲方要求时间","price":"10"},
+            {"id":119,"title":"大剪刀","unit":"把","quantity":"1","brand":"王麻子牌918","model":"王麻子牌918","delivery":"甲方要求时间","price":"10"},
+            {"id":120,"title":"轮胎打气筒","unit":"个","quantity":"1","brand":"永兴，354","model":"永兴，354","delivery":"甲方要求时间","price":"18"},
+            {"id":121,"title":"量角器","unit":"把","quantity":"1","brand":"得力6239，45°/60°，15 cm","model":"得力6239，45°/60°，15 cm","delivery":"甲方要求时间","price":"15"},
+            {"id":122,"title":"改锥","unit":"把","quantity":"1","brand":"德力西，8036","model":"德力西，8036","delivery":"甲方要求时间","price":"4"},
+            {"id":123,"title":"工业壁扇","unit":"台","quantity":"1","brand":"美的，L04Q","model":"美的，L04Q","delivery":"甲方要求时间","price":"150"},
+            {"id":124,"title":"格兰仕微波炉","unit":"台","quantity":"1","brand":"格兰仕463,2000w","model":"格兰仕463,2000w","delivery":"甲方要求时间","price":"400"},
+            {"id":125,"title":"净水机","unit":"台","quantity":"1","brand":"沁园牌，P6X3Z","model":"沁园牌，P6X3Z","delivery":"甲方要求时间","price":"1000"},
+            {"id":126,"title":"防爆平台灯","unit":"套","quantity":"1","brand":"德力西，M8T1X","model":"德力西，M8T1X","delivery":"甲方要求时间","price":"230"},
+            {"id":127,"title":"LED灯泡","unit":"个","quantity":"1","brand":"沪字牌AN9K5，30w","model":"沪字牌AN9K5，30w","delivery":"甲方要求时间","price":"15"},
+            {"id":128,"title":"LED灯泡","unit":"盏","quantity":"1","brand":"沪字牌AN9K5，50w","model":"沪字牌AN9K5，50w","delivery":"甲方要求时间","price":"16"},
+            {"id":129,"title":"LED灯泡","unit":"个","quantity":"1","brand":"沪字牌AN9K5，60w","model":"沪字牌AN9K5，60w","delivery":"甲方要求时间","price":"18"},
+            {"id":130,"title":"充电电池 5# 1.2V 2400mAh","unit":"件","quantity":"1","brand":"火雷牌，640","model":"火雷牌，640","delivery":"甲方要求时间","price":"20"},
+            {"id":131,"title":"南孚电池","unit":"个","quantity":"1","brand":"南孚T12Y5，1号","model":"南孚T12Y5，1号","delivery":"甲方要求时间","price":"3"},
+            {"id":132,"title":"书架","unit":"件","quantity":"1","brand":"得力BA108-01单人挂书架 蓝色","model":"得力BA108-01单人挂书架 蓝色","delivery":"甲方要求时间","price":"40"},
+            {"id":133,"title":"报刊架","unit":"件","quantity":"1","brand":"得力9304，落地式 海量型","model":"得力9304，落地式 海量型","delivery":"甲方要求时间","price":"230"},
+            {"id":134,"title":"电磁炉","unit":"个","quantity":"1","brand":"格兰仕Z12B,2200w","model":"格兰仕Z12B,2200w","delivery":"甲方要求时间","price":"260"},
+            {"id":135,"title":"订书机","unit":"个","quantity":"1","brand":"得力0306S，24/6，装订≤25 页","model":"得力0306S，24/6，装订≤25 页","delivery":"甲方要求时间","price":"10"},
+            {"id":136,"title":"照明开关 FZM-10/220V","unit":"件","quantity":"1","brand":"得力ZM-02343","model":"得力ZM-02343","delivery":"甲方要求时间","price":"10"},
+            {"id":137,"title":"金刚石修正笔 RH-DL1-1.0","unit":"件","quantity":"1","brand":"得力8102，5 mm×8 m","model":"得力8102，5 mm×8 m","delivery":"甲方要求时间","price":"185"},
+            {"id":138,"title":"铁锤","unit":"把","quantity":"1","brand":"德力西，B6Y3","model":"德力西，B6Y3","delivery":"甲方要求时间","price":"8"},
+            {"id":139,"title":"铜球阀","unit":"个","quantity":"1","brand":"天净牌46","model":"天净牌46","delivery":"甲方要求时间","price":"15"}
         ];
 
-        // 搜索函数
+        // 搜索函数：结果以表格格式显示，包括单价
         function searchDatabase() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const resultsContainer = document.getElementById('results');
-            resultsContainer.innerHTML = ''; // 清空之前的搜索结果
+            resultsContainer.innerHTML = '';
 
             if (query === '') {
                 resultsContainer.innerHTML = '<p>请输入搜索关键词。</p>';
                 return;
             }
 
-            // 过滤数据库中匹配的项（搜索标题、品牌或型号）
-            const filteredData = database.filter(item => {
-                return item.title.toLowerCase().includes(query) || 
-                       item.brand.toLowerCase().includes(query) || 
-                       item.model.toLowerCase().includes(query);
-            });
+            const filteredData = database.filter(item => 
+                (item.title && item.title.toLowerCase().includes(query)) || 
+                (item.brand && item.brand.toLowerCase().includes(query)) || 
+                (item.model && item.model.toLowerCase().includes(query))
+            );
 
             if (filteredData.length === 0) {
                 resultsContainer.innerHTML = '<p>没有找到匹配的结果。</p>';
                 return;
             }
 
-            // 显示搜索结果
-            filteredData.forEach(item => {
-                const resultItem = document.createElement('div');
-                resultItem.classList.add('result-item');
-                resultItem.innerHTML = `
-                    <h3>${item.title} (序号: ${item.id})</h3>
-                    <p>品牌: ${item.brand}</p>
-                    <p>规格/型号: ${item.model}</p>
-                    <p>单位: ${item.unit}</p>
-                    <p>数量: ${item.quantity}</p>
-                    <p>交货时间: ${item.delivery}</p>
-                `;
-                resultsContainer.appendChild(resultItem);
+            // 创建表格
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            // 表头
+            const headerRow = document.createElement('tr');
+            ['序号', '物资名称', '单位', '数量', '品牌', '规格/型号', '单价 (元)', '交货时间'].forEach(text => {
+                const th = document.createElement('th');
+                th.textContent = text;
+                headerRow.appendChild(th);
             });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // 表格行
+            filteredData.forEach(item => {
+                const row = document.createElement('tr');
+                [item.id, item.title, item.unit, item.quantity, item.brand, item.model, item.price || '未知', item.delivery].forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    row.appendChild(td);
+                });
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+
+            resultsContainer.appendChild(table);
         }
     </script>
 </body>
